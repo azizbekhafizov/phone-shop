@@ -1,6 +1,6 @@
 import Hero from "./components/Hero";
 import CategorySlider from ".//components/CategorySlider";
-// import ProductTabs from "@/components/ProductTabs";
+import ProductTabs from "@/components/ProductTabs";
 // import PromoCards from "@/components/ProductCard";
 // import MiniProducts from "@/components/MiniProducts";
 // import Banner from "@/components/Banner";
@@ -10,9 +10,9 @@ export default function HomePage() {
     <main>
       <Hero />
        <CategorySlider />
-       {/*
+       
       <ProductTabs />
-      <PromoCards />
+      {/*<PromoCards />
       <MiniProducts />
       <Banner /> */}
     </main>
