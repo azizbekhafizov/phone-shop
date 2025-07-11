@@ -1,7 +1,7 @@
 import Hero from "./components/Hero";
 import CategorySlider from ".//components/CategorySlider";
 import ProductTabs from "./components/ProductTabs";
-// import PromoCards from "@/components/ProductCard";
+import PromoCards from "./components/PromoCards";
 // import MiniProducts from "@/components/MiniProducts";
 // import Banner from "@/components/Banner";
 
@@ -12,8 +12,8 @@ export default function HomePage() {
        <CategorySlider />
        
       <ProductTabs />
-      {/*<PromoCards />
-      <MiniProducts />
+      <PromoCards />
+      {/*<MiniProducts />
       <Banner /> */}
     </main>
   );

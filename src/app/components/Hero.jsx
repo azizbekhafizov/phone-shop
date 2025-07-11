@@ -12,7 +12,6 @@ import mac from '../../../public/assets/images/MacBook.png'
 export default function Hero() {
   return (
     <div>
-      {/* IPhone 14 Pro Section */}
       <section className="bg-[#211C24] py-16 px-4">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-10">
           <div className="text-center md:text-left max-w-xl">
@@ -43,7 +42,6 @@ export default function Hero() {
         </div>
       </section>
 
-      {/* PlayStation / AirPods / Vision Pro / MacBook */}
       <section className="flex flex-col lg:flex-row">
         <div className="w-full lg:w-1/2">
           <div className="flex flex-col md:flex-row items-center p-6 h-[328px]">

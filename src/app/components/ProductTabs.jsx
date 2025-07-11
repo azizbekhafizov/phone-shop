@@ -1,91 +1,103 @@
 "use client";
 
-import { useState } from "react";
-import Image from "next/image";
-import { Heart, ShoppingCart, Scale } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Heart } from "lucide-react";
+import { fetchCategoryProducts } from "../lib/api";
+import { useStorage } from "../contexts/StorageContext";
+import Link from "next/link"; 
 
-import iphone14 from "@/assets/products/iphone14.png";
-import macbook from "@/assets/products/macbook.png";
-import watch from "@/assets/products/watch.png";
-import watch from '../../../public/assets/images/watch.png'
-
-const tabs = ["New Arrivals", "Best Sellers", "Featured"];
-
-const sampleProducts = [
-  {
-    id: 1,
-    title: "iPhone 14 Pro",
-    price: 1099,
-    image: iphone14,
-  },
-  {
-    id: 2,
-    title: "MacBook Air M2",
-    price: 1299,
-    image: macbook,
-  },
-  {
-    id: 3,
-    title: "Apple Watch Ultra",
-    price: 799,
-    image: watch,
-  },
+const TABS = [
+  { id: 1, label: "Phones", category: "smartphones" },
+  { id: 2, label: "Laptops", category: "laptops" },
+  { id: 3, label: "Watches", category: "womens-watches" },
 ];
 
 export default function ProductTabs() {
-  const [activeTab, setActiveTab] = useState("New Arrivals");
+  const [activeTab, setActiveTab] = useState(TABS[0]);
+  const [products, setProducts] = useState([]);
+
+  const { wishlist, toggleWishlist, addToCart } = useStorage();
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const data = await fetchCategoryProducts(activeTab.category, 8);
+        setProducts(data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    load();
+  }, [activeTab]);
+
+  const isInWishlist = (id) => wishlist.some((item) => item.id === id);
 
   return (
-    <section className="py-14 px-4 max-w-7xl mx-auto">
+    <div className="max-w-6xl mx-auto px-4 py-10">
       {/* Tabs */}
-      <div className="flex gap-4 justify-center mb-8">
-        {tabs.map((tab) => (
+      <div className="flex space-x-6 border-b mb-6">
+        {TABS.map((tab) => (
           <button
-            key={tab}
+            key={tab.id}
             onClick={() => setActiveTab(tab)}
-            className={`px-6 py-2 text-sm font-medium rounded-full transition ${
-              activeTab === tab
-                ? "bg-black text-white"
-                : "bg-gray-200 hover:bg-gray-300"
+            className={`pb-2 ${
+              activeTab.id === tab.id
+                ? "border-b-2 border-black font-semibold"
+                : "text-gray-400"
             }`}
           >
-            {tab}
+            {tab.label}
           </button>
         ))}
       </div>
 
-      {/* Products */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {sampleProducts.map((product) => (
-          <div
-            key={product.id}
-            className="bg-white rounded-xl shadow hover:shadow-md p-4 transition relative group"
-          >
-            <Image
-              src={product.image}
-              alt={product.title}
-              className="w-full h-[220px] object-contain mb-4"
-              width={400}
-              height={250}
-            />
-            <h3 className="text-lg font-semibold">{product.title}</h3>
-            <p className="text-gray-500 text-sm mt-1">${product.price}</p>
+      {/* Product Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {products.map((product) => (
+          <Link href={`/product/${product.id}`} key={product.id}>
+            <div className="relative w-[268px] h-[432px] rounded-[9px] shadow-sm hover:shadow-md transition bg-[#F6F6F6] cursor-pointer">
+              <button
+                className="absolute top-3 right-3 z-10"
+                onClick={(e) => {
+                  e.preventDefault(); // Link ichida
+                  toggleWishlist(product);
+                }}
+              >
+                <Heart
+                  className={`w-6 h-6 ${
+                    isInWishlist(product.id)
+                      ? "text-red-500 fill-red-500"
+                      : "text-gray-400"
+                  }`}
+                />
+              </button>
 
-            {/* Icons */}
-            <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition">
-              <button className="p-2 bg-white rounded-full shadow hover:bg-gray-100">
-                <Heart size={18} />
-              </button>
-              <button className="p-2 bg-white rounded-full shadow hover:bg-gray-100">
-                <Scale size={18} />
-              </button>
-              <button className="p-2 bg-white rounded-full shadow hover:bg-gray-100">
-                <ShoppingCart size={18} />
+              <img
+                src={product.thumbnail}
+                alt={product.title}
+                className="w-[220px] h-[220px] mx-auto mt-12 object-contain"
+              />
+
+              <h3 className="text-[18px] leading-[24px] text-center font-medium mt-2">
+                {product.title}
+              </h3>
+              <p className="text-[24px] leading-[24px] text-center mt-4 font-semibold">
+                ${product.price}
+              </p>
+
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  addToCart(product);
+                }}
+                className="w-[188px] h-[48px] bg-black text-white rounded-[8px] flex justify-center items-center m-auto mt-7"
+              >
+                Buy Now
               </button>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
-    </section>
+    </div>
   );
 }
